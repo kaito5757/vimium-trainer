@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vimium Trainer
 
-## Getting Started
+Vimium ブラウザ拡張機能のキーボードショートカットを練習するためのWebアプリケーションです。
 
-First, run the development server:
+## 特徴
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🎯 **44種類のVimiumショートカット**を7つのカテゴリに分けて学習
+- ⌨️ **実際のキーボード入力**による練習システム
+- 🎨 **バーチャルキーボードUI**でリアルタイム入力確認
+- 📊 **進捗追跡**と正解率表示
+- 📱 **モダンなUI/UX**（モーダル、プログレスバー等）
+- 🔄 **重複問題回避**機能
+- 🏗️ **クリーンアーキテクチャ**採用
+
+## 技術スタック
+
+- **Next.js 15.3.4** (App Router)
+- **TypeScript**
+- **Tailwind CSS 4.1.11**
+- **Zod** (バリデーション)
+- **pnpm** (パッケージマネージャー)
+
+## アーキテクチャ
+
+```
+src/
+├── domain/           # ドメイン層
+├── application/      # アプリケーション層
+├── presenters/       # プレゼンター層
+├── infrastructure/   # インフラストラクチャー層
+├── handlers/         # ハンドラー層
+├── components/       # UIコンポーネント
+└── data/            # データ定義
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## カテゴリ
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **ページナビゲーション** - スクロール、移動系
+2. **リンク・ページ操作** - リンク操作、ページ制御
+3. **URL・ブラウジング** - URL操作、ナビゲーション
+4. **タブ管理** - タブの作成、切り替え、操作
+5. **履歴** - 履歴の前進、後退
+6. **検索** - ページ内検索、検索機能
+7. **マーク** - ブックマーク、マーク機能
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## セットアップ
 
-## Learn More
+```bash
+# リポジトリをクローン
+git clone https://github.com/kaito5757/vimium-trainer.git
+cd vimium-trainer
 
-To learn more about Next.js, take a look at the following resources:
+# 依存関係をインストール
+pnpm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 開発サーバーを起動
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+http://localhost:3000 でアプリケーションにアクセスできます。
 
-## Deploy on Vercel
+## 使い方
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. トップページでカテゴリを選択（または全てのショートカットを選択）
+2. 問題が表示されたら、該当するキーボードショートカットを入力
+3. 正解・不正解がモーダルで表示
+4. Enterキーで次の問題に進む
+5. 全問題終了後、結果を確認
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 開発者向け
+
+### コマンド
+
+```bash
+# 開発サーバー起動
+pnpm dev
+
+# ビルド
+pnpm build
+
+# 本番サーバー起動
+pnpm start
+
+# 型チェック
+pnpm type-check
+
+# Lint
+pnpm lint
+```
+
+### プロジェクト構造
+
+- `app/` - Next.js App Router ページ
+- `src/domain/` - ビジネスロジック
+- `src/application/` - ユースケース
+- `src/infrastructure/` - データ永続化
+- `src/components/` - 再利用可能コンポーネント
+
+## ライセンス
+
+MIT License
