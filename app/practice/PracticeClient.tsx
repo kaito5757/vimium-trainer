@@ -21,6 +21,8 @@ interface PracticeState {
   allResults: PracticeResultViewModel[];
   lastCorrectAnswer: string;
   lastQuestionDescription: string;
+  timeRemaining: number;
+  isTimerRunning: boolean;
 }
 
 export function PracticeClient() {
@@ -38,6 +40,8 @@ export function PracticeClient() {
     allResults: [],
     lastCorrectAnswer: '',
     lastQuestionDescription: '',
+    timeRemaining: 5,
+    isTimerRunning: false,
   });
 
   const practiceHandler = new PracticeHandler();
@@ -53,7 +57,7 @@ export function PracticeClient() {
     // 正解の文字数に達したら判定
     if (currentInput.length === state.currentQuestion.correctAnswer.length) {
       // すでに判定中でないことを確認
-      setState(prev => ({ ...prev, isLoading: true }));
+      setState(prev => ({ ...prev, isLoading: true, isTimerRunning: false }));
       setTimeout(() => {
         checkAnswer(currentInput);
       }, 300);
@@ -121,6 +125,8 @@ export function PracticeClient() {
         showResultModal: false,
         lastCorrectAnswer: '',
         lastQuestionDescription: '',
+        timeRemaining: 5,
+        isTimerRunning: true,
       }));
     } catch (error) {
       console.error('練習開始エラー:', error);
@@ -155,6 +161,8 @@ export function PracticeClient() {
       result: null,
       pressedKeys: [],
       usedQuestions: [...prev.usedQuestions, question.correctAnswer],
+      timeRemaining: 5,
+      isTimerRunning: true,
     }));
   }, [state.sessionId, state.selectedCategory, state.usedQuestions]);
 
@@ -173,12 +181,28 @@ export function PracticeClient() {
       allResults: [],
       lastCorrectAnswer: '',
       lastQuestionDescription: '',
+      timeRemaining: 5,
+      isTimerRunning: false,
     });
   };
 
   const finishPractice = () => {
     setState(prev => ({ ...prev, showResultModal: true }));
   };
+
+  // タイマー処理
+  useEffect(() => {
+    if (state.isTimerRunning && state.timeRemaining > 0) {
+      const timer = setTimeout(() => {
+        setState(prev => ({ ...prev, timeRemaining: prev.timeRemaining - 1 }));
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (state.isTimerRunning && state.timeRemaining === 0) {
+      // 時間切れ処理
+      setState(prev => ({ ...prev, isTimerRunning: false }));
+      checkAnswer(state.pressedKeys.join(''));
+    }
+  }, [state.isTimerRunning, state.timeRemaining, state.pressedKeys]);
 
   // Enterキーでモーダルを閉じる
   useEffect(() => {
@@ -295,11 +319,21 @@ export function PracticeClient() {
                 </span>
               </div>
             </div>
-            {state.allResults.length > 0 && (
-              <span className="text-sm text-gray-500">
-                正解率: {Math.round((state.allResults.filter(r => r.isCorrect).length / state.allResults.length) * 100)}%
-              </span>
-            )}
+            <div className="flex items-center gap-4">
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                state.timeRemaining <= 2 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+              }`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-bold">{state.timeRemaining}秒</span>
+              </div>
+              {state.allResults.length > 0 && (
+                <span className="text-sm text-gray-500">
+                  正解率: {Math.round((state.allResults.filter(r => r.isCorrect).length / state.allResults.length) * 100)}%
+                </span>
+              )}
+            </div>
           </div>
           
           {/* プログレスバー */}
